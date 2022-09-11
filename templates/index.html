@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hello</title>
+    <style>
+        :root {
+            --color-border: #337f9f;
+            --color-text: #2a3d49;
+            --size-border-width--thick: 9px;
+            --size-border-width--thin: 1px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            padding: 10px;
+        }
+
+        .grid-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5vh;
+            font-size: 30px;
+            text-align: center;
+            color: var(--color-text);
+            cursor: pointer;
+        }
+
+        .grid-item * {
+            pointer-events: none;
+        }
+
+        .hidden {
+            background: none;
+            border: none;
+            cursor: default;
+        }
+
+        #left {
+            border-bottom: var(--size-border-width--thin) solid var(--color-border);
+            border-top: var(--size-border-width--thin) solid var(--color-border);
+            border-left: var(--size-border-width--thick) solid var(--color-border);
+            border-bottom-left-radius: 24px;
+            border-top-left-radius: 24px;
+        }
+
+        #right {
+            border-bottom: var(--size-border-width--thin) solid var(--color-border);
+            border-top: var(--size-border-width--thin) solid var(--color-border);
+            border-right: var(--size-border-width--thick) solid var(--color-border);
+            border-bottom-right-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+
+        #up {
+            border-left: var(--size-border-width--thin) solid var(--color-border);
+            border-right: var(--size-border-width--thin) solid var(--color-border);
+            border-top: var(--size-border-width--thick) solid var(--color-border);
+            border-top-right-radius: 24px;
+            border-top-left-radius: 24px;
+        }
+
+        #down {
+            border-left: var(--size-border-width--thin) solid var(--color-border);
+            border-right: var(--size-border-width--thin) solid var(--color-border);
+            border-bottom: var(--size-border-width--thick) solid var(--color-border);
+            border-bottom-right-radius: 24px;
+            border-bottom-left-radius: 24px;
+        }
+
+        .bar {
+            position: absolute;
+            bottom: 16px;
+            width: calc(100vw - 16px);
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .bar > * {
+            background: var(--color-border);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 8px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="grid-container">
+    <div class="hidden"></div>
+    <div data-code="up" id="up" class="grid-item">
+        <ion-icon name="caret-up-outline"></ion-icon>
+    </div>
+    <div class="hidden"></div>
+    <div data-code="left" id="left" class="grid-item">
+        <ion-icon name="caret-back-outline"></ion-icon>
+    </div>
+    <div data-code="enter" id="center" class="grid-item">
+        <ion-icon name="ellipse-outline"></ion-icon>
+    </div>
+    <div data-code="right" id="right" class="grid-item">
+        <ion-icon name="caret-forward-outline"></ion-icon>
+    </div>
+    <div class="hidden"></div>
+    <div data-code="down" id="down" class="grid-item">
+        <ion-icon name="caret-down-outline"></ion-icon>
+    </div>
+    <div class="hidden"></div>
+</div>
+<div class="bar">
+    <div data-code="escape">escape</div>
+    <div data-code="cmd">windows</div>
+    <div data-code="space">space</div>
+</div>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script>
+    const gridButtons = document.getElementsByClassName('grid-item')
+    const bottomButtons = document.getElementsByClassName("bar")[0].children
+
+    const defaultRequestConfig = {
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    }
+
+    async function sendInput(code) {
+        await fetch(
+            "/click",
+            {
+                method: 'POST',
+                body: JSON.stringify({code}),
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            }
+        )
+    }
+
+    function addButtonEvents(buttons) {
+        for (let btn of buttons) {
+            btn.addEventListener('click', async (e) => {
+                await sendInput(e.target.dataset.code)
+            })
+        }
+    }
+
+    addButtonEvents(gridButtons)
+    addButtonEvents(bottomButtons)
+
+</script>
+</body>
+</html>
