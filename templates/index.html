@@ -132,8 +132,8 @@
             'Content-Type': 'application/x-www-form-urlencoded',
         }
     }
-
     async function sendInput(code) {
+        navigator.vibrate(50);
         await fetch(
             "/click",
             {
