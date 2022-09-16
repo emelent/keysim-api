@@ -1,29 +1,14 @@
 #!python
-from flask import Flask, request, make_response
+from flask import Flask, request
 from flask import render_template
 import pyqrcode
 from pynput.keyboard import Key, Controller
 
-# from flask_sqlalchemy import SQLAlchemy
-# from flask_migrate import Migrate
-
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-#
-# db = SQLAlchemy(app)
-# migrate = Migrate(app, db)
-#
-#
-# class User(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(128))
-
-
 kb = Controller()
 
 
 def press_key(code):
-    key = Key.media_volume_up
     if code == "up":
         key = Key.up
     elif code == "down":
@@ -40,7 +25,7 @@ def press_key(code):
         key = Key.esc
     elif code == "space":
         key = Key.space
-    if key is None:
+    else:
         return
 
     kb.press(key)
@@ -48,20 +33,22 @@ def press_key(code):
 
 
 @app.route('/')
-def hello_world():  # put application's code here
+def index():
     return render_template('index.html')
 
 
 @app.route('/click', methods=["POST"])
 def click():
-    code = request.get_json()['code']
+    data = request.get_json()
+    if data is None:
+        return ""
+    code = data['code']
     press_key(code)
     return ""
 
 
 if __name__ == '__main__':
     import socket
-
 
     def get_ip_address():
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
